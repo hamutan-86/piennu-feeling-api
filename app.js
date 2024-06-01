@@ -6,6 +6,8 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
 
+const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+
 app.get('/', (req, res) => {
   res.send('Piennu Feeling API');
 });
@@ -24,7 +26,7 @@ app.get('/getCount', (req, res) => {
   })
 });
 
-app.post('/increment/createTask', (req, res) => {
+app.post('/increment/createTask', async (req, res) => {
   if (!req.body.amount){
     res.status(400).json({"error": "Form body Invalid"})
     return false;
@@ -39,6 +41,7 @@ app.post('/increment/createTask', (req, res) => {
   fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   res.status(200).json({"taskId": taskId})
   while (true) {
+    await sleep(1);
     fetch("https://object.piennu777.jp/feelings/api/increment.php", {method: "POST", headers: {
         "accept": "*/*",
         "origin": "https://object.piennu777.jp",
