@@ -37,7 +37,7 @@ app.post('/increment/createTask', async (req, res) => {
   let count = 0;
   var taskId = Math.floor(Math.random()* 100000000)
   let jsonObject = JSON.parse(fs.readFileSync('./tasks.json', 'utf8'));
-  jsonObject[taskId.toString()] = "pending";
+  jsonObject[taskId.toString()] = `pending:0/${req.body.amount}`;
   fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   res.status(200).json({"taskId": taskId})
   while (true) {
@@ -55,8 +55,10 @@ app.post('/increment/createTask', async (req, res) => {
     if (count == req.body.amount){
       break;
     }
+    jsonObject[taskId.toString()] = `pending:${count}/${amount}`;
+    fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   }
-  jsonObject[taskId.toString()] = "success";
+  jsonObject[taskId.toString()] = `success:${count}/${amount}`;
   fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   return true;
 });
@@ -79,9 +81,9 @@ app.post('/increment/getTaskResult', (req, res) => {
       res.status(200).json({"status": jsonObject[taskId]})
       return true;
     }
-    res.status(400).json({"error": "Task not exists"})
-    return false;
   }
+  res.status(400).json({"error": "Task not exists"})
+  return false;
 });
 
 app.listen(3000, () => {
