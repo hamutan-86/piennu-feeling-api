@@ -55,10 +55,10 @@ app.post('/increment/createTask', async (req, res) => {
     if (count == req.body.amount){
       break;
     }
-    jsonObject[taskId.toString()] = `pending:${count}/${amount}`;
+    jsonObject[taskId.toString()] = `pending:${count}/${req.body.amount}`;
     fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   }
-  jsonObject[taskId.toString()] = `success:${count}/${amount}`;
+  jsonObject[taskId.toString()] = `success:${count}/${req.body.amount}`;
   fs.writeFileSync('./tasks.json', JSON.stringify(jsonObject));
   return true;
 });
